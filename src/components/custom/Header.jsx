@@ -1,29 +1,44 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "../ui/button";
+import { motion, AnimatePresence } from "framer-motion";
+import { useGoogleLogin, googleLogout } from "@react-oauth/google";
+import axios from "axios";
+import { toast } from "sonner";
+import { FcGoogle } from "react-icons/fc";
+import { Menu } from 'lucide-react';
+
+import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { googleLogout, useGoogleLogin } from "@react-oauth/google";
-import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { FcGoogle } from "react-icons/fc";
-import axios from "axios";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
+const fadeInUp = {
+  initial: { opacity: 0, y: -20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -20 },
+  transition: { duration: 0.3 }
+};
 
 export default function Header() {
-  const user = JSON.parse(localStorage.getItem("user"));
-
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
   const [openDialog, setOpenDialog] = useState(false);
-
   const [loading, setLoading] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const login = useGoogleLogin({
     onSuccess: (codeResp) => GetUserProfile(codeResp),
@@ -31,6 +46,7 @@ export default function Header() {
   });
 
   const GetUserProfile = (tokenInfo) => {
+    setLoading(true);
     axios
       .get(
         `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo?.access_token}`,
@@ -42,92 +58,194 @@ export default function Header() {
         }
       )
       .then((res) => {
-        // console.log(res);
         localStorage.setItem("user", JSON.stringify(res.data));
+        setUser(res.data);
         setOpenDialog(false);
-        window.location.reload();
+        setLoading(false);
+        toast.success("Successfully signed in!");
+      })
+      .catch((error) => {
+        console.error("Error fetching user profile:", error);
+        setLoading(false);
+        toast.error("Failed to sign in. Please try again.");
       });
   };
 
-  // useEffect(() => {
-  //   console.log(user);
-  // }, []);
+  const handleLogout = () => {
+    googleLogout();
+    localStorage.removeItem("user");
+    setUser(null);
+    setIsMenuOpen(false);
+    toast.success("You have been logged out");
+    window.location.reload();
+  };
+
+  useEffect(() => {
+    console.log("user logged in");
+  }, [user]);
+
+  const NavItems = () => (
+    <>
+      <a href="/create-trip">
+        <Button variant="outline" className="w-full md:w-auto rounded-full bg-transparent text-white border-white hover:bg-white hover:text-black transition-colors duration-300">
+          Create Trip +
+        </Button>
+      </a>
+      <a href="/my-trips">
+        <Button variant="outline" className="w-full md:w-auto rounded-full bg-transparent text-white border-white hover:bg-white hover:text-black transition-colors duration-300">
+          My Trips
+        </Button>
+      </a>
+    </>
+  );
 
   return (
-    <div className="p-6 shadow-sm flex justify-between items-center px-5">
-      <a href="/">
-        <div className="font-bold text-white text-3xl">
-          Wander
-          <span className="text-[#ff9100]">AI</span>
-        </div>
-      </a>
-      <div>
-        {user ? (
-          <div className="flex items-center gap-3">
-            <a href={"/create-trip"}>
-              <Button variant="outline" className="rounded-full">
-                Create Trip +
-              </Button>
-            </a>
-            <a href={"/my-trips"}>
-              <Button variant="outline" className="rounded-full">
-                My Trips
-              </Button>
-            </a>
+    <motion.header
+      className="bg-gradient-to-r from-gray-900 to-black text-white p-4 md:p-6 shadow-lg"
+      initial="initial"
+      animate="animate"
+      variants={fadeInUp}
+    >
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <a href="/" className="flex items-center space-x-2">
+          <motion.div
+            className="font-bold text-2xl md:text-3xl lg:text-4xl"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Wander
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+              AI
+            </span>
+          </motion.div>
+        </a>
 
-            <Popover>
-              <PopoverTrigger>
-                <img
-                  src={user?.picture}
-                  className="h-[30px] w-[30px] rounded-full"
-                  alt=""
-                />
-              </PopoverTrigger>
-              <PopoverContent className="flex items-center gap-2">
-                <Button
-                  variant="destructive"
-                  onClick={() => {
-                    googleLogout();
-                    localStorage.clear();
-                    window.location.reload();
-                    toast("You have been logged out");
-                  }}
-                >
-                  Logout
-                </Button>
-                <p className="text-sm font-light">Sign Out Of this App</p>
-              </PopoverContent>
-            </Popover>
-          </div>
-        ) : (
-          <Button onClick={() => setOpenDialog(true)}>Sign in</Button>
-        )}
+        <AnimatePresence mode="wait">
+          {user ? (
+            <motion.div
+              key="user-menu"
+              className="hidden md:flex items-center space-x-4"
+              variants={fadeInUp}
+            >
+              <NavItems />
+              <Popover>
+                <PopoverTrigger>
+                  <motion.img
+                    src={user.picture}
+                    alt="User"
+                    className="h-10 w-10 rounded-full border-2 border-white cursor-pointer"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  />
+                </PopoverTrigger>
+                <PopoverContent className="bg-gray-800 border-gray-700">
+                  <div className="flex flex-col items-center gap-4 p-4">
+                    <img src={user.picture} alt="User" className="h-16 w-16 rounded-full" />
+                    <p className="text-white font-semibold">{user.name}</p>
+                    <Button
+                      variant="destructive"
+                      onClick={handleLogout}
+                      className="w-full"
+                    >
+                      Logout
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </motion.div>
+          ) : (
+            <motion.div key="sign-in" variants={fadeInUp} className="hidden md:block">
+              <Button
+                onClick={() => setOpenDialog(true)}
+                className="bg-gradient-to-r from-purple-400 to-pink-600 text-white rounded-full px-6 py-2 font-semibold hover:from-orange-500 hover:to-pink-700 transition-all duration-300"
+              >
+                Sign in
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Mobile Menu */}
+        <div className="md:hidden">
+          <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon" className="bg-transparent border-white">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="bg-gray-900 text-white">
+              <SheetHeader>
+                <SheetTitle className="text-white">Menu</SheetTitle>
+              </SheetHeader>
+              <div className="mt-6 flex flex-col space-y-4">
+                {user ? (
+                  <>
+                    <div className="flex items-center space-x-4 mb-4">
+                      <img src={user.picture} alt="User" className="h-10 w-10 rounded-full" />
+                      <p className="font-semibold">{user.name}</p>
+                    </div>
+                    <NavItems />
+                    <Button
+                      variant="destructive"
+                      onClick={handleLogout}
+                      className="w-full"
+                    >
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      setOpenDialog(true);
+                    }}
+                    className="bg-gradient-to-r from-purple-400 to-pink-600 text-white rounded-full px-6 py-2 font-semibold hover:from-orange-500 hover:to-pink-700 transition-all duration-300"
+                  >
+                    Sign in
+                  </Button>
+                )}
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
-      <Dialog open={openDialog}>
-        <DialogContent>
+
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+        <DialogContent className="bg-gray-900 text-white border-gray-800">
           <DialogHeader>
-            <DialogTitle>Sign In</DialogTitle>
+            <DialogTitle className="text-2xl font-bold mb-4">Sign In</DialogTitle>
             <DialogDescription>
-              <h1 className="font-bold text-xl text-black">
-                {" "}
+              <h1 className="font-bold text-3xl mb-6">
                 Wander
-                <span className="text-[#ff9100]">AI</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-600">
+                  AI
+                </span>
               </h1>
-              <h2 className="font-bold text-lg mt-5">Sign In With Google</h2>
-              <p>Sign in to the app with Google Authentication</p>
+              <h2 className="font-semibold text-xl mb-2">Sign In With Google</h2>
+              <p className="text-gray-400 mb-6">Access your account using Google Authentication</p>
 
               <Button
                 disabled={loading}
-                onClick={login}
-                className="w-full mt-5 flex gap-3 items-center"
+                onClick={() => {
+                  setLoading(true);
+                  login();
+                }}
+                className="w-full bg-white text-gray-900 hover:bg-gray-200 transition-colors duration-300 flex items-center justify-center space-x-2 py-3 rounded-lg"
               >
-                Sign In With Google
-                <FcGoogle className="h-7 w-7" />
+                {loading ? (
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-900"></div>
+                ) : (
+                  <>
+                    <FcGoogle className="h-6 w-6" />
+                    <span>Sign In With Google</span>
+                  </>
+                )}
               </Button>
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
       </Dialog>
-    </div>
+    </motion.header>
   );
 }
+
