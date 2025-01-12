@@ -17,6 +17,7 @@ WanderAI is a smart travel planning application that leverages AI to help users 
 - **Frontend**: ReactJS
 - **UI Library**: Tailwind CSS, ShadCN
 - **Animation**: Framer Motion
+- **Authentication**: Google OAuth
 - **APIs**: Gemini AI, Google Maps API
 - **Utilities**: Firebase for backend services
 - **Deployment**: Vercel
