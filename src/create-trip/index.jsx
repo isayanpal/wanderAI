@@ -263,14 +263,18 @@ export default function CreateTrip() {
         </motion.div>
       </motion.div>
 
-      <Dialog open={openDialog}>
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent className="bg-gray-800 text-white">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold mb-4">Sign In</DialogTitle>
             <DialogDescription>
-              <h1 className="font-bold text-xl mb-4">AI Trip Planner</h1>
-              <h2 className="font-bold text-lg mb-2">Sign In With Google</h2>
-              <p className="mb-6">Sign in to the app with Google Authentication</p>
+            <h1 className="font-bold text-3xl mb-6 text-white">
+                Wander
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-600">
+                  AI
+                </span>
+              </h1>
+              <p className="text-gray-400 mb-6">Access your account using Google Authentication</p>
 
               <Button
                 disabled={loading}

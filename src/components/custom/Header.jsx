@@ -221,7 +221,6 @@ export default function Header() {
                   AI
                 </span>
               </h1>
-              <h2 className="font-semibold text-xl mb-2">Sign In With Google</h2>
               <p className="text-gray-400 mb-6">Access your account using Google Authentication</p>
 
               <Button
