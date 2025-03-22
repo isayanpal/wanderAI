@@ -1,4 +1,9 @@
 #root {
-    background-color: #010104;
+    @apply bg-gradient-to-br from-black via-gray-900 to-[#080e01];
 }
 
+
+
+/* #root {
+    background: linear-gradient(to bottom right, black, #1f1f1f, #080e01);
+} */

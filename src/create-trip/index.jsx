@@ -127,7 +127,7 @@ export default function CreateTrip() {
   }, [user]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white p-6 md:p-10">
+    <div className="min-h-screen text-white p-6 md:p-10">
       <motion.div 
         className="max-w-4xl mx-auto"
         initial="initial"

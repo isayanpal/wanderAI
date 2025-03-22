@@ -101,7 +101,7 @@ export default function Header() {
 
   return (
     <motion.header
-      className="bg-gradient-to-r from-gray-900 to-black text-white p-4 md:p-6 shadow-lg"
+      className="text-white p-4 md:p-6 bg-transparent sticky top-0 z-50 backdrop-blur-md"
       initial="initial"
       animate="animate"
       variants={fadeInUp}
@@ -173,7 +173,7 @@ export default function Header() {
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent className="bg-gray-900 text-white">
+            <SheetContent className="bg-transparent text-white backdrop-blur-md">
               <SheetHeader>
                 <SheetTitle className="text-white">Menu</SheetTitle>
               </SheetHeader>

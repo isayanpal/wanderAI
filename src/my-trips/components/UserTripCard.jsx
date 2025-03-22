@@ -39,7 +39,7 @@ export default function UserTripCard({ trip }) {
   return (
     <Link to={"/view-trip/" + trip?.id}>
       <motion.div
-        className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
+        className="backdrop-blur-xl shadow-xl hover:shadow-purple-300 rounded-lg overflow-hidden hover:shadow-2xl transition-all duration-300 bg-gray-900/50 border-gray-800 hover:border-purple-800/50"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >

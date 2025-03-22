@@ -22,7 +22,7 @@ WanderAI is a smart travel planning application that leverages AI to help users 
 - **Utilities**: Firebase for backend services
 - **Deployment**: Vercel
 
-<img src="images/1.png">
+<img src="images/wanderAiupdated.png">
 <img src="images/2.png">
 <img src="images/3.png">
 <img src="images/4.png">
