@@ -4,7 +4,7 @@ import { useGoogleLogin, googleLogout } from "@react-oauth/google";
 import axios from "axios";
 import { toast } from "sonner";
 import { FcGoogle } from "react-icons/fc";
-import { Menu } from 'lucide-react';
+import { Menu } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -31,11 +31,18 @@ const fadeInUp = {
   initial: { opacity: 0, y: -20 },
   animate: { opacity: 1, y: 0 },
   exit: { opacity: 0, y: -20 },
-  transition: { duration: 0.3 }
+  transition: { duration: 0.3 },
 };
 
 export default function Header() {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+  const [user, setUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user")) || null;
+    } catch (error) {
+      console.error("Error parsing user data from localStorage:", error);
+      return null;
+    }
+  });
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -87,12 +94,18 @@ export default function Header() {
   const NavItems = () => (
     <>
       <a href="/create-trip">
-        <Button variant="outline" className="w-full md:w-auto rounded-full bg-transparent text-white border-white hover:bg-white hover:text-black transition-colors duration-300">
+        <Button
+          variant="outline"
+          className="w-full md:w-auto rounded-full bg-transparent text-white border-white hover:bg-white hover:text-black transition-colors duration-300"
+        >
           Create Trip +
         </Button>
       </a>
       <a href="/my-trips">
-        <Button variant="outline" className="w-full md:w-auto rounded-full bg-transparent text-white border-white hover:bg-white hover:text-black transition-colors duration-300">
+        <Button
+          variant="outline"
+          className="w-full md:w-auto rounded-full bg-transparent text-white border-white hover:bg-white hover:text-black transition-colors duration-300"
+        >
           My Trips
         </Button>
       </a>
@@ -140,7 +153,11 @@ export default function Header() {
                 </PopoverTrigger>
                 <PopoverContent className="bg-gray-800 border-gray-700">
                   <div className="flex flex-col items-center gap-4 p-4">
-                    <img src={user.picture} alt="User" className="h-16 w-16 rounded-full" />
+                    <img
+                      src={user.picture}
+                      alt="User"
+                      className="h-16 w-16 rounded-full"
+                    />
                     <p className="text-white font-semibold">{user.name}</p>
                     <Button
                       variant="destructive"
@@ -154,7 +171,11 @@ export default function Header() {
               </Popover>
             </motion.div>
           ) : (
-            <motion.div key="sign-in" variants={fadeInUp} className="hidden md:block">
+            <motion.div
+              key="sign-in"
+              variants={fadeInUp}
+              className="hidden md:block"
+            >
               <Button
                 onClick={() => setOpenDialog(true)}
                 className="bg-gradient-to-r from-purple-400 to-pink-600 text-white rounded-full px-6 py-2 font-semibold hover:from-orange-500 hover:to-pink-700 transition-all duration-300"
@@ -169,7 +190,11 @@ export default function Header() {
         <div className="md:hidden">
           <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="bg-transparent border-white">
+              <Button
+                variant="outline"
+                size="icon"
+                className="bg-transparent border-white"
+              >
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
@@ -181,7 +206,11 @@ export default function Header() {
                 {user ? (
                   <>
                     <div className="flex items-center space-x-4 mb-4">
-                      <img src={user.picture} alt="User" className="h-10 w-10 rounded-full" />
+                      <img
+                        src={user.picture}
+                        alt="User"
+                        className="h-10 w-10 rounded-full"
+                      />
                       <p className="font-semibold">{user.name}</p>
                     </div>
                     <NavItems />
@@ -213,7 +242,9 @@ export default function Header() {
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent className="bg-gray-900 text-white border-gray-800">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold mb-4">Sign In</DialogTitle>
+            <DialogTitle className="text-2xl font-bold mb-4">
+              Sign In
+            </DialogTitle>
             <DialogDescription>
               <h1 className="font-bold text-3xl mb-6">
                 Wander
@@ -221,7 +252,9 @@ export default function Header() {
                   AI
                 </span>
               </h1>
-              <p className="text-gray-400 mb-6">Access your account using Google Authentication</p>
+              <p className="text-gray-400 mb-6">
+                Access your account using Google Authentication
+              </p>
 
               <Button
                 disabled={loading}
@@ -247,4 +280,3 @@ export default function Header() {
     </motion.header>
   );
 }
-
