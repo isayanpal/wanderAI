@@ -38,13 +38,14 @@ export default function HotelCardItem({ hotel }) {
         hotel?.hotelName + "," + hotel?.hotelAddress
       )}`}
       target="_blank"
+      className="block h-full"
     >
       <motion.div
-        className="group relative bg-[#181825] rounded-xl overflow-hidden hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-300 ring-1 ring-white/5"
+        className="group relative bg-[#181825] rounded-xl overflow-hidden hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-300 ring-1 ring-white/5 h-full flex flex-col"
         whileHover={{ y: -3 }}
       >
         {/* Compact Image Section */}
-        <div className="relative h-40 overflow-hidden">
+        <div className="relative h-40 overflow-hidden shrink-0">
           <img
             src={photoUrl || "/demoTrip.webp"}
             alt={hotel?.hotelName}
@@ -60,17 +61,17 @@ export default function HotelCardItem({ hotel }) {
         </div>
 
         {/* Info Section */}
-        <div className="p-3 flex flex-col gap-2">
+        <div className="p-3 flex flex-col gap-2 flex-grow">
           <div className="flex-1">
             <h3 className="font-semibold text-base text-white line-clamp-1 group-hover:text-purple-400 transition-colors tracking-tight">
               {hotel?.hotelName}
             </h3>
-            <p className="text-[10px] text-gray-400 line-clamp-1 mt-0.5 flex items-center gap-1">
+            <p className="text-[10px] text-gray-400 line-clamp-2 mt-0.5 flex items-start gap-1">
               📍 {hotel?.hotelAddress}
             </p>
           </div>
 
-          <div className="flex justify-between items-end pt-2 border-t border-white/5 mt-1">
+          <div className="flex justify-between items-end pt-2 border-t border-white/5 mt-auto">
             <div className="flex flex-col">
               <span className="text-[10px] text-gray-500 uppercase font-medium tracking-wide">
                 Price

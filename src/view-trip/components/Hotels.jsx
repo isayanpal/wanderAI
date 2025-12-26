@@ -24,6 +24,7 @@ export default function Hotels({ trip }) {
             key={index}
             variants={fadeInUp}
             transition={{ delay: index * 0.1 }}
+            className="h-full"
           >
             <HotelCardItem hotel={hotel} />
           </motion.div>
