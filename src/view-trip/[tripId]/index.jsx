@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { motion } from "motion/react";
-import { toast } from "sonner";
-import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/service/firebaseConfig";
-import InfoSection from "../components/InfoSection";
+import { doc, getDoc } from "firebase/firestore";
+import { motion } from "motion/react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 import Hotels from "../components/Hotels";
+import InfoSection from "../components/InfoSection";
 import PlacesToVisit from "../components/PlacesToVisit";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6 }
+  transition: { duration: 0.6 },
 };
 
 export default function ViewTrip() {
@@ -31,10 +31,10 @@ export default function ViewTrip() {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      console.log("Document: ", docSnap.data());
+      // console.log("Document: ", docSnap.data());
       setTrip(docSnap.data());
     } else {
-      console.log("No such document");
+      // console.log("No such document");
       toast("No trip found");
     }
     setLoading(false);
@@ -49,9 +49,14 @@ export default function ViewTrip() {
   }
 
   return (
-    <div className="min-h-screen  text-white p-6 md:p-10">
-      <motion.div 
-        className="max-w-6xl mx-auto space-y-12"
+    <div className="min-h-screen bg-[#05050A] text-white p-6 md:p-10 relative overflow-hidden">
+      {/* Animated Background Gradients */}
+      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-900/30 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-pink-900/20 rounded-full blur-[120px] translate-x-1/3 translate-y-1/3 pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 w-[800px] h-[800px] bg-indigo-900/10 rounded-full blur-[150px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+
+      <motion.div
+        className="max-w-6xl mx-auto space-y-16 relative z-10"
         initial="initial"
         animate="animate"
         variants={fadeInUp}
@@ -63,4 +68,3 @@ export default function ViewTrip() {
     </div>
   );
 }
-

@@ -1,24 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useGoogleLogin, googleLogout } from "@react-oauth/google";
+import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import { toast } from "sonner";
-import { FcGoogle } from "react-icons/fc";
+import { AnimatePresence, motion } from "framer-motion";
 import { Menu } from "lucide-react";
+import { useState } from "react";
+import { FcGoogle } from "react-icons/fc";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Sheet,
   SheetContent,
@@ -87,9 +86,9 @@ export default function Header() {
     window.location.reload();
   };
 
-  useEffect(() => {
-    console.log("user logged in");
-  }, [user]);
+  // useEffect(() => {
+  //   console.log("user logged in");
+  // }, [user]);
 
   const NavItems = () => (
     <>
@@ -240,38 +239,37 @@ export default function Header() {
       </div>
 
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-        <DialogContent className="bg-gray-900 text-white border-gray-800">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold mb-4">
-              Sign In
-            </DialogTitle>
-            <DialogDescription>
-              <h1 className="font-bold text-3xl mb-6">
-                Wander
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-600">
-                  AI
-                </span>
-              </h1>
-              <p className="text-gray-400 mb-6">
-                Access your account using Google Authentication
-              </p>
+        <DialogContent className="bg-[#0a0a0a] border border-white/10 text-white sm:rounded-3xl shadow-2xl p-0 overflow-hidden max-w-sm">
+          <DialogHeader className="p-0">
+            <div className="relative h-48 w-full bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 flex items-center justify-center overflow-hidden">
+              <div className="absolute inset-0 bg-black/10 backdrop-blur-[2px]" />
+              <div className="z-10 text-center">
+                <span className="text-6xl mb-2 block">✈️</span>
+                <h2 className="text-2xl font-bold text-white drop-shadow-md">
+                  Wander AI
+                </h2>
+              </div>
+              {/* Decorative Circles */}
+              <div className="absolute -top-10 -left-10 w-32 h-32 bg-white/20 rounded-full blur-2xl" />
+              <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-white/20 rounded-full blur-2xl" />
+            </div>
+
+            <DialogDescription className="p-8 space-y-6 bg-[#0a0a0a]">
+              <div className="text-center space-y-2">
+                <h3 className="text-xl font-bold text-white">Welcome Back!</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">
+                  Sign in to save your trips and access your personalized
+                  itineraries across devices.
+                </p>
+              </div>
 
               <Button
                 disabled={loading}
-                onClick={() => {
-                  setLoading(true);
-                  login();
-                }}
-                className="w-full bg-white text-gray-900 hover:bg-gray-200 transition-colors duration-300 flex items-center justify-center space-x-2 py-3 rounded-lg"
+                onClick={login}
+                className="w-full py-6 flex items-center justify-center gap-3 bg-white hover:bg-gray-200 text-black font-bold rounded-xl text-lg transition-transform hover:scale-[1.02] active:scale-[0.98] shadow-lg"
               >
-                {loading ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-900"></div>
-                ) : (
-                  <>
-                    <FcGoogle className="h-6 w-6" />
-                    <span>Sign In With Google</span>
-                  </>
-                )}
+                <FcGoogle className="h-6 w-6" />
+                Continue with Google
               </Button>
             </DialogDescription>
           </DialogHeader>
