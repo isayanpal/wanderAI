@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { ArrowRight, Calendar, MapPin, Search, Sparkles } from "lucide-react";
 
 const steps = [

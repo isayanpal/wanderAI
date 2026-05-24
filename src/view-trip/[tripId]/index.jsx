@@ -27,17 +27,20 @@ export default function ViewTrip() {
 
   const GetTripData = async () => {
     setLoading(true);
-    const docRef = doc(db, "AITrips", tripId);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      // console.log("Document: ", docSnap.data());
-      setTrip(docSnap.data());
-    } else {
-      // console.log("No such document");
-      toast("No trip found");
+    try {
+      const docRef = doc(db, "AITrips", tripId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setTrip(docSnap.data());
+      } else {
+        toast("No trip found");
+      }
+    } catch (e) {
+      console.error("Error fetching trip", e);
+      toast.error("Failed to load trip. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   if (loading) {
