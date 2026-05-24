@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import "./App.css";
 import CallToAction from "./components/custom/CallToAction";
 import FeaturesSection from "./components/custom/FeaturesSection";

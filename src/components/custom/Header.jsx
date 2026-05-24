@@ -1,18 +1,12 @@
-import { googleLogout, useGoogleLogin } from "@react-oauth/google";
-import axios from "axios";
-import { AnimatePresence, motion } from "framer-motion";
+import { googleLogout } from "@react-oauth/google";
+import { AnimatePresence, motion } from "motion/react";
 import { Menu } from "lucide-react";
 import { useState } from "react";
-import { FcGoogle } from "react-icons/fc";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-} from "@/components/ui/dialog";
+import LoginDialog from "@/components/custom/LoginDialog";
 import {
   Popover,
   PopoverContent,
@@ -25,6 +19,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useGoogleAuth } from "@/hooks/useGoogleAuth";
 
 const fadeInUp = {
   initial: { opacity: 0, y: -20 },
@@ -43,39 +38,15 @@ export default function Header() {
     }
   });
   const [openDialog, setOpenDialog] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const login = useGoogleLogin({
-    onSuccess: (codeResp) => GetUserProfile(codeResp),
-    onError: (error) => console.log(error),
+  const { loading, login } = useGoogleAuth({
+    onSuccess: (userData) => {
+      setUser(userData);
+      setOpenDialog(false);
+      toast.success("Successfully signed in!");
+    },
   });
-
-  const GetUserProfile = (tokenInfo) => {
-    setLoading(true);
-    axios
-      .get(
-        `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo?.access_token}`,
-        {
-          headers: {
-            Authorization: `Bearer ${tokenInfo?.access_token}`,
-            Accept: "Application/json",
-          },
-        }
-      )
-      .then((res) => {
-        localStorage.setItem("user", JSON.stringify(res.data));
-        setUser(res.data);
-        setOpenDialog(false);
-        setLoading(false);
-        toast.success("Successfully signed in!");
-      })
-      .catch((error) => {
-        console.error("Error fetching user profile:", error);
-        setLoading(false);
-        toast.error("Failed to sign in. Please try again.");
-      });
-  };
 
   const handleLogout = () => {
     googleLogout();
@@ -86,28 +57,24 @@ export default function Header() {
     window.location.reload();
   };
 
-  // useEffect(() => {
-  //   console.log("user logged in");
-  // }, [user]);
-
   const NavItems = () => (
     <>
-      <a href="/create-trip">
+      <Link to="/create-trip">
         <Button
           variant="outline"
           className="w-full md:w-auto rounded-full bg-transparent text-white border-white hover:bg-white hover:text-black transition-colors duration-300"
         >
           Create Trip +
         </Button>
-      </a>
-      <a href="/my-trips">
+      </Link>
+      <Link to="/my-trips">
         <Button
           variant="outline"
           className="w-full md:w-auto rounded-full bg-transparent text-white border-white hover:bg-white hover:text-black transition-colors duration-300"
         >
           My Trips
         </Button>
-      </a>
+      </Link>
     </>
   );
 
@@ -119,7 +86,7 @@ export default function Header() {
       variants={fadeInUp}
     >
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <a href="/" className="flex items-center space-x-2">
+        <Link to="/" className="flex items-center space-x-2">
           <motion.div
             className="font-bold text-2xl md:text-3xl lg:text-4xl"
             whileHover={{ scale: 1.05 }}
@@ -130,7 +97,7 @@ export default function Header() {
               AI
             </span>
           </motion.div>
-        </a>
+        </Link>
 
         <AnimatePresence mode="wait">
           {user ? (
@@ -238,43 +205,12 @@ export default function Header() {
         </div>
       </div>
 
-      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-        <DialogContent className="bg-[#0a0a0a] border border-white/10 text-white sm:rounded-3xl shadow-2xl p-0 overflow-hidden max-w-sm">
-          <DialogHeader className="p-0">
-            <div className="relative h-48 w-full bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 flex items-center justify-center overflow-hidden">
-              <div className="absolute inset-0 bg-black/10 backdrop-blur-[2px]" />
-              <div className="z-10 text-center">
-                <span className="text-6xl mb-2 block">✈️</span>
-                <h2 className="text-2xl font-bold text-white drop-shadow-md">
-                  Wander AI
-                </h2>
-              </div>
-              {/* Decorative Circles */}
-              <div className="absolute -top-10 -left-10 w-32 h-32 bg-white/20 rounded-full blur-2xl" />
-              <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-white/20 rounded-full blur-2xl" />
-            </div>
-
-            <DialogDescription className="p-8 space-y-6 bg-[#0a0a0a]">
-              <div className="text-center space-y-2">
-                <h3 className="text-xl font-bold text-white">Welcome Back!</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  Sign in to save your trips and access your personalized
-                  itineraries across devices.
-                </p>
-              </div>
-
-              <Button
-                disabled={loading}
-                onClick={login}
-                className="w-full py-6 flex items-center justify-center gap-3 bg-white hover:bg-gray-200 text-black font-bold rounded-xl text-lg transition-transform hover:scale-[1.02] active:scale-[0.98] shadow-lg"
-              >
-                <FcGoogle className="h-6 w-6" />
-                Continue with Google
-              </Button>
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+      <LoginDialog
+        open={openDialog}
+        onOpenChange={setOpenDialog}
+        onLogin={login}
+        loading={loading}
+      />
     </motion.header>
   );
 }

@@ -56,7 +56,7 @@ export default function MyTrips() {
       });
       // Sort trips by newest first if possible, or just reverse to show latest added
       // Assuming no timestamp, just reversing order of addition usually flows better, or use sorting if field exists
-      setUserTrips(trips.reverse());
+      setUserTrips([...trips].reverse());
     } catch (error) {
       console.error("Error fetching trips:", error);
     } finally {
