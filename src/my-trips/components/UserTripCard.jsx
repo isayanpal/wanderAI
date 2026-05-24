@@ -1,11 +1,7 @@
-import { GetPlaceDetails } from "@/service/GlobalApi";
+import { GetPlaceDetails, PHOTO_REF_URL } from "@/service/GlobalApi";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
-const PHOTO_REF_URL =
-  "https://places.googleapis.com/v1/{NAME}/media?maxHeightPx=600&maxWidthPx=600&key=" +
-  import.meta.env.VITE_GOOGLE_MAP_API_KEY;
 
 export default function UserTripCard({ trip }) {
   const [photoUrl, setPhotoUrl] = useState();
@@ -26,7 +22,7 @@ export default function UserTripCard({ trip }) {
       const res = await GetPlaceDetails(data);
       const PhotoUrl = PHOTO_REF_URL.replace(
         "{NAME}",
-        res.data.places[0].photos[1].name
+        res.data.places[0]?.photos?.[0]?.name
       );
       setPhotoUrl(PhotoUrl);
     } catch (error) {
